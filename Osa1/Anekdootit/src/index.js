@@ -1,72 +1,77 @@
 import React, { useState } from "react";
 import ReactDOM from "react-dom";
 
-const Anecdote = ({ anecdote }) => {
+const Anecdote = (props) => {
   return (
-    <>
-      <p>
-        {anecdote.text} <br />
-        has {anecdote.votes} votes
-      </p>
-    </>
-  );
-};
-
-const AnecdoteWithVoting = ({ anecdote, handleVoting }) => {
-  const onClick = () => handleVoting(anecdote.id);
-  return (
-    <>
-      <Anecdote anecdote={anecdote} />
-      <Button text={"vote"} handleClick={onClick} />
-    </>
+    <p>
+      {props.anecdotes[props.selected]} <br />
+      has {props.votes[props.value]} votes
+    </p>
   );
 };
 
 const Button = (props) => {
   return <button onClick={props.handleClick}> {props.text} </button>;
 };
+const MostVoted = ({ votes, anecdotes }) => {
+  let returnValue = votes[0];
+  let i = 0;
 
-const App = ({ initialAnecdotes }) => {
-  const [selected, setSelected] = useState(0);
-  const [anecdotes, setAnecdotes] = useState(initialAnecdotes);
-
-  const handleVoting = (index) => {
-    const newArray = anecdotes.map((anecdote) => {
-      if (anecdote.id !== index) {
-        return anecdote;
-      }
-      return {
-        ...anecdote,
-        votes: anecdote.votes + 1,
-      };
-    });
-    setAnecdotes(newArray);
-  };
-  const selectRandomAnecdote = () => {
-    const randomIndex = Math.floor(Math.random() * anecdotes.length);
-    setSelected(randomIndex);
-  };
-
-  const selectedAnecdote = anecdotes.find(
-    (anecdote) => anecdote.id === selected
-  );
-  const mostVotedAnecdote = anecdotes.sort((a, b) => a.votes - b.votes)[0];
+  for (let index = 0; index <= votes.length; index++) {
+    if (votes[index] > returnValue) {
+      returnValue = votes[index];
+      i = index;
+    }
+  }
 
   return (
     <div>
-      <h2>Anecdote of the day</h2>
-      <AnecdoteWithVoting
-        anecdote={selectedAnecdote}
-        handleVoting={handleVoting}
-      />
-      <Button text={"next anecdote"} handleClick={selectRandomAnecdote} />
-      <h2>Anecdote with most votes</h2>
-      <Anecdote anecdote={mostVotedAnecdote} />
+      <p>
+        {anecdotes[i]} <br />
+        has {returnValue} votes
+      </p>
     </div>
   );
 };
 
-const anecdotes2 = [
+const App = (props) => {
+  const points = Array(6).fill(0);
+
+  const [selected, setSelected] = useState(0);
+  const [votes, updateVotes] = useState(points);
+
+  const handleClick = () => {
+    setSelected(Math.floor(Math.random() * 6 + 0));
+  };
+  const handleClick2 = () => {
+    const copy = [...votes];
+    copy[selected] += 1;
+    updateVotes(copy);
+  };
+
+  console.log(selected);
+  const value = selected;
+
+  console.log(votes);
+
+  return (
+    <div>
+      <h2>Anecdote of the day</h2>
+      <Anecdote
+        anecdotes={anecdotes}
+        selected={selected}
+        value={value}
+        votes={votes}
+      />
+      <Button text={"vote"} handleClick={handleClick2} />
+      <Button text={"next anecdote"} handleClick={handleClick} />
+      <h2>Anecdote with most votes</h2>
+      <MostVoted anecdotes={anecdotes} votes={votes} />
+    </div>
+  );
+};
+
+const anecdotes = [
   "If it hurts, do it more often",
   "Adding manpower to a late software project makes it later!",
   "The first 90 percent of the code accounts for the first 90 percent of the development time...The remaining 10 percent of the code accounts for the other 90 percent of the development time.",
@@ -75,13 +80,4 @@ const anecdotes2 = [
   "Debugging is twice as hard as writing the code in the first place. Therefore, if you write the code as cleverly as possible, you are, by definition, not smart enough to debug it.",
 ];
 
-const anecdoteObjectArray = anecdotes2.map((anecdote, index) => ({
-  id: index,
-  text: anecdote,
-  votes: 0,
-}));
-
-ReactDOM.render(
-  <App initialAnecdotes={anecdoteObjectArray} />,
-  document.getElementById("root")
-);
+ReactDOM.render(<App anecdotes={anecdotes} />, document.getElementById("root"));
