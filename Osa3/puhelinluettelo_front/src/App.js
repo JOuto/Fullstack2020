@@ -12,6 +12,9 @@ const Notification = ({ message }) => {
   if (message.includes("removed")) {
     return <div className="error">{message}</div>;
   }
+  if (message.includes("alidat")) {
+    return <div className="error">{message}</div>;
+  }
   return <div className="notification">{message}</div>;
 };
 
@@ -51,16 +54,25 @@ const App = () => {
         number: newNumber,
       };
 
-      personService.create(nameObject).then((response) => {
-        setPersons(persons.concat(response.data));
+      personService
+        .create(nameObject)
+        .then((response) => {
+          setPersons(persons.concat(response.data));
 
-        setNotification(`Added ${newName} `);
-        setTimeout(() => {
-          setNotification(null);
-        }, 5000);
-        setNewName("");
-        setNewNumber("");
-      });
+          setNotification(`Added ${newName} `);
+          setTimeout(() => {
+            setNotification(null);
+          }, 5000);
+          setNewName("");
+          setNewNumber("");
+        })
+        .catch((error) => {
+          console.log(error.response.data);
+          setNotification(error.response.data.error);
+          setTimeout(() => {
+            setNotification(null);
+          }, 5000);
+        });
     }
     if (persons.some((p) => p.name === newName)) {
       if (
@@ -78,28 +90,24 @@ const App = () => {
         );
 
         axios
-          .put(
-            "http://localhost:3001/api/persons/" + nameToReplace[0].id,
-            nameObject
-          )
+          .put("/api/persons/" + nameToReplace[0].id, nameObject)
+
           .then((response) => console.log(response.data))
           .catch((error) => {
-            setNotification(
-              `Note '${nameToReplace[0].name}' was already removed from server`
-            );
+            setNotification(error.response.data.error);
 
             setTimeout(() => {
               setNotification(null);
             }, 5000);
           });
+        setNotification(`${newName}´s number updated`);
+        setTimeout(() => {
+          setNotification(null);
+        }, 5000);
       }
-      setNotification(`${newName}´s number updated`);
-      setTimeout(() => {
-        setNotification(null);
-      }, 5000);
+
       setNewName("");
       setNewNumber("");
-      setNameListRender(namesToShow);
     }
   };
 
@@ -115,12 +123,12 @@ const App = () => {
   const handleNameSearch = (event) => {
     setSearchInput(event.target.value);
   };
-
+  console.log(persons);
   const namesToShow = persons.filter((p) => p.name.includes(searchInput));
 
   const deleteName = (name) => () => {
     axios
-      .delete("http://localhost:3001/api/persons/" + name.id)
+      .delete("/api/persons/" + name.id)
       .then((response) => {
         console.log(response.data);
         setNameListRender(namesToShow);

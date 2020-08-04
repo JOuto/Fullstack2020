@@ -1,0 +1,36 @@
+{
+  "name": "puhelinluettelo",
+  "version": "1.0.0",
+  "description": "puhelinluettelo_backend",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "test": "test",
+    "deploy": "git push heroku master",
+    "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && git push && npm run deploy",
+    "logs:prod": "heroku logs --tail"
+  },
+  "repository": {
+    "type": "git",
+    "url": "/Users/jouni/Puhelinluettelo"
+  },
+  "keywords": [
+    "node",
+    "puhelinluettelo",
+    "backend"
+  ],
+  "author": "JT",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "mongoose": "^5.9.26",
+    "mongoose-unique-validator": "^2.0.3",
+    "morgan": "^1.10.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.4"
+  }
+}
