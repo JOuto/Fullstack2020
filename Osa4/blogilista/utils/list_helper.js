@@ -31,8 +31,6 @@ const mostBlogs = (blogs) => {
       author.blogs = blogCount.length;
     });
 
-    console.log(authors);
-
     const authorWithMostBlogs = authors.sort((a, b) => b.blogs - a.blogs)[0];
     return authorWithMostBlogs;
   }
@@ -52,10 +50,7 @@ const mostLikes = (blogs) => {
         .map((blog) => blog.likes)
         .reduce((a, b) => a + b, 0);
 
-      console.log(likesCount);
-
       author.likes = likesCount;
-      console.log(authors);
     });
     return authors.sort((a, b) => b.likes - a.likes)[0];
   }

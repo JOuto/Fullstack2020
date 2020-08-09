@@ -93,7 +93,6 @@ describe("total likes", () => {
 describe("blog with most likes", () => {
   test("when there is multiple blogs on list is chose right", () => {
     const result = listHelper.favoriteBlog(blogs);
-    console.log(result);
     expect(result).toEqual({
       title: "Canonical string reduction",
       author: "Edsger W. Dijkstra",
@@ -102,7 +101,6 @@ describe("blog with most likes", () => {
   });
   test("when only one in list should be that one", () => {
     const result = listHelper.favoriteBlog(listWithOneBlog);
-    console.log(result);
     expect(result).toEqual({
       title: "Go To Statement Considered Harmful",
       author: "Edsger W. Dijkstra",
@@ -113,7 +111,6 @@ describe("blog with most likes", () => {
 describe("author with most blogs", () => {
   test("when multiple blogs in list calculated right", () => {
     const result = listHelper.mostBlogs(blogs);
-    console.log(result);
     expect(result).toEqual({ author: "Robert C. Martin", blogs: 3 });
   });
   test("when list is empty ", () => {
