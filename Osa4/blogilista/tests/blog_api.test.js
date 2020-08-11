@@ -3,6 +3,7 @@ const app = require("../app");
 const api = supertest(app);
 const Blog = require("../models/blog");
 const mongoose = require("mongoose");
+const logger = require("../utils/logger");
 
 const initialBlogs = [
   {
@@ -73,6 +74,34 @@ test("blog has value id instead of _id", async () => {
   const response = await api.get("/api/blogs");
   expect(response.body[0].id).toBeDefined();
 });
+test("if likes for posted blog is not defined, likes = 0", async () => {
+  const blogWithoutLikes = {
+    title: "testiBlogi4",
+    author: "testaaja",
+    url: "www.testi.com",
+  };
+  let blogObject = new Blog(blogWithoutLikes);
+  const savedBlog = await blogObject.save();
+  console.log(savedBlog);
+
+  const response = await api.get("/api/notes");
+  expect(savedBlog.likes).toBe(0);
+});
+test("if title or url is missing, response 400 bad request will follow", async () => {
+  const blogWithoutTitle = {
+    author: "testaaja",
+    url: "www.testi.com",
+  };
+  const blogWithoutUrl = {
+    title: "testiblogi",
+    author: "testaaja",
+  };
+
+  await api.post("/api/blogs").send(blogWithoutTitle).expect(400);
+
+  await api.post("/api/blogs").send(blogWithoutUrl).expect(400);
+});
+
 afterAll(() => {
   mongoose.connection.close();
 });
