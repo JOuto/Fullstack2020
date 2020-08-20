@@ -4,6 +4,15 @@ const api = supertest(app);
 const Blog = require("../models/blog");
 const mongoose = require("mongoose");
 const logger = require("../utils/logger");
+const bcrypt = require("bcrypt");
+const User = require("../models/user");
+const jwt = require("jsonwebtoken");
+
+const testUser = new User({
+  username: "testitunnus",
+  name: "testinimi",
+  passwordHash: "testisalasana",
+});
 
 const initialBlogs = [
   {
@@ -19,23 +28,26 @@ const initialBlogs = [
     likes: 104,
   },
 ];
-
 beforeEach(async () => {
   await Blog.deleteMany({});
+  await User.deleteMany({});
 
-  let blogObject = new Blog(initialBlogs[0]);
-  await blogObject.save();
+  let testObject = new Blog(initialBlogs[0]);
+  await testObject.save();
 
-  blogObject = new Blog(initialBlogs[1]);
-  await blogObject.save();
+  testObject = new Blog(initialBlogs[1]);
+  await testObject.save();
+
+  testObject = new User(testUser);
+  await testObject.save();
 });
 
-/* test("blogs are returned as json", async () => {
+test("blogs are returned as json", async () => {
   await api
     .get("/api/blogs")
     .expect(200)
     .expect("Content-Type", /application\/json/);
-}); */
+});
 test("all blogs are returned", async () => {
   const response = await api.get("/api/blogs");
 
@@ -50,15 +62,25 @@ test("a specific blog is within the returned notes", async () => {
   expect(response.body[0].title).toContain("testiBlogi1");
 });
 test("a valid blog can be added ", async () => {
+  const user = await User.findOne();
+  const userForToken = {
+    username: user.username,
+    id: user._id,
+  };
+  const token = jwt.sign(userForToken, process.env.SECRET);
+
   const newBlog = {
     title: "testiBlogi3",
     author: "testaaja",
     url: "www.testi.com",
     likes: 105,
+    user: user,
   };
 
   await api
+
     .post("/api/blogs")
+    .set("Authorization", "bearer " + token)
     .send(newBlog)
     .expect(200)
     .expect("Content-Type", /application\/json/);
@@ -70,7 +92,7 @@ test("a valid blog can be added ", async () => {
   expect(response.body).toHaveLength(initialBlogs.length + 1);
   expect(response.body[2].title).toContain("testiBlogi3");
 });
-test("blog has value id instead of _id", async () => {
+test("blog has field id instead of _id", async () => {
   const response = await api.get("/api/blogs");
   expect(response.body[0].id).toBeDefined();
 });
@@ -88,20 +110,64 @@ test("if likes for posted blog is not defined, likes = 0", async () => {
   expect(savedBlog.likes).toBe(0);
 });
 test("if title or url is missing, response 400 bad request will follow", async () => {
+  const user = await User.findOne();
+  const userForToken = {
+    username: user.username,
+    id: user._id,
+  };
+  const token = jwt.sign(userForToken, process.env.SECRET);
+
   const blogWithoutTitle = {
     author: "testaaja",
     url: "www.testi.com",
+    user: user,
   };
   const blogWithoutUrl = {
     title: "testiblogi",
     author: "testaaja",
+    user: user,
   };
 
-  await api.post("/api/blogs").send(blogWithoutTitle).expect(400);
+  await api
+    .post("/api/blogs")
+    .set("Authorization", "bearer " + token)
+    .send(blogWithoutTitle)
+    .expect(400);
 
-  await api.post("/api/blogs").send(blogWithoutUrl).expect(400);
+  await api
+    .post("/api/blogs")
+    .set("Authorization", "bearer " + token)
+    .send(blogWithoutUrl)
+    .expect(400);
 });
 
+test("username or password shorter than 4 characters results proper error message", async () => {
+  const tooShortUsernameUser = new User({
+    username: "123",
+    name: "1234",
+    passwordHash: "1234",
+  });
+  const tooShortPasswordUser = new User({
+    username: "1234",
+    name: "1234",
+    passwordHash: "123",
+  });
+
+  await api.post("/api/users").send(tooShortUsernameUser).expect(400);
+  await api.post("/api/users").send(tooShortPasswordUser).expect(400);
+});
+
+test("an attemt to post blog without token results 401 unauthorized message", async () => {
+  const user = await User.findOne();
+  const blogWithoutToken = new Blog({
+    title: "testiBlogi3",
+    author: "testaaja",
+    url: "www.testi.com",
+    likes: 105,
+    user: user,
+  });
+  await api.post("/api/blogs").send(blogWithoutToken).expect(401);
+});
 afterAll(() => {
   mongoose.connection.close();
 });
