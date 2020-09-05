@@ -34,6 +34,7 @@ const App = () => {
       <div>
         username
         <input
+          id={"user"}
           type="text"
           value={username}
           name="Username"
@@ -43,13 +44,16 @@ const App = () => {
       <div>
         password
         <input
+          id={"pass"}
           type="password"
           value={password}
           name="Password"
           onChange={({ target }) => setPassword(target.value)}
         />
       </div>
-      <button type="submit">login</button>
+      <button id={"login"} type="submit">
+        login
+      </button>
     </form>
   );
 
@@ -114,7 +118,7 @@ const App = () => {
       }, 5000);
     }
   };
-
+  const loggedUser = JSON.parse(window.localStorage.getItem('loggedBlogappUser'));
   return (
     <div>
       <h1>Blogs</h1>
@@ -122,20 +126,21 @@ const App = () => {
       <Notification message={errorMessage} />
 
       {user === null && loginForm()}
-      {user !== null && (
+      {loggedUser !== null && (
         <div>
-          <p>{user.name} logged in</p>
+          <p>{loggedUser.name} logged in</p>
           <button onClick={handleLogOut}>logout</button>
           <h2>Create new</h2>
           <Togglable buttonLabel="new blog" ref={blogFormRef}>
             <BlogForm createBlog={createBlog} />
           </Togglable>
 
-          <ul>
+          <ul >
             {blogs
               .sort((a, b) => b.likes - a.likes)
               .map((blog, i) => (
                 <Blog
+                  className="blog"
                   key={i}
                   user={user}
                   blog={blog}
