@@ -1,17 +1,20 @@
 
+export const setNotif = (notificationtext, time) => {
+    const timeForTimeout = time * 1000
+    return async dispatch => {
 
-export const setNotif = (content) => {
+        dispatch({
+            type: 'SET_NOTIFICATION',
+            data: {
+                content: notificationtext,
+            }
+        })
+        setTimeout(() => {
+            dispatch({ type: "RESET_NOTIFICATION" })
+        }, timeForTimeout)
 
-    return {
-        type: 'SET_NOTIFICATION',
-        data: {
-            content,
-        }
-    }
-}
-export const resetNotif = () => {
-    return {
-        type: "RESET_NOTIFICATION",
+
+
     }
 }
 
@@ -21,6 +24,7 @@ const reducer = (state = "", action) => {
     switch (action.type) {
 
         case 'SET_NOTIFICATION':
+            console.log(action.data)
             const notifToShow = action.data.content
             return notifToShow
 

@@ -1,3 +1,5 @@
+import anecdoteService from "../services/anecdotes"
+
 const anecdotesAtStart = [
   'If it hurts, do it more often',
   'Adding manpower to a late software project makes it later!',
@@ -19,23 +21,44 @@ const asObject = (anecdote) => {
 
 const initialState = anecdotesAtStart.map(asObject)
 
-export const addAnecdote = (content) => {
+/* export const addAnecdote = (data) => {
+
 
   return {
-    type: 'ADD',
-    data: {
-      content,
-    }
+    type: 'NEW_ANECDOTE',
+    data,
+  }
+} */
+export const addAnecdote = content => {
+  return async dispatch => {
+    const newAnecdote = await anecdoteService.createNew(content)
+    dispatch({
+      type: 'ADD',
+      data: newAnecdote,
+    })
   }
 }
-export const addVote = (id) => {
-  return {
-    type: "VOTE",
-    data: { id: id }
+export const addVote = content => {
+  return async dispatch => {
+    anecdoteService.newVote(content)
+    dispatch({
+      type: "VOTE",
+      data: { id: content.id }
+    })
   }
 }
 
-const reducer = (state = initialState, action) => {
+export const initializeAnecdotes = () => {
+  return async dispatch => {
+    const anecdotes = await anecdoteService.getAll()
+    dispatch({
+      type: 'INIT_ANECDOTES',
+      data: anecdotes,
+    })
+  }
+}
+
+const reducer = (state = [], action) => {
   console.log('state now: ', state)
   console.log('action', action)
   switch (action.type) {
@@ -46,16 +69,18 @@ const reducer = (state = initialState, action) => {
         anecdote.id !== id ? anecdote : { ...anecdote, votes: anecdote.votes + 1 })
 
     case "ADD":
-      const c = action.data.content
+      //const c = action.data.content
       const randomId = (100000 * Math.random()).toFixed(0)
       const anecdoteToAdd = {
-        content: c,
-        id: randomId,
+        content: action.data.content,
+        id: action.data.id,
         votes: 0
       }
       console.log(anecdoteToAdd)
       return state.concat(anecdoteToAdd)
 
+    case 'INIT_ANECDOTES':
+      return action.data
 
     default:
       return state

@@ -3,10 +3,10 @@ import ReactDOM from 'react-dom'
 import { Provider } from 'react-redux'
 import App from './App'
 //import reducer from './reducers/anecdoteReducer'
-import storeCreator from "./components/store"
+import store from "./components/store"
 
 
-const store = storeCreator
+
 
 const renderApp = () => {
   ReactDOM.render(

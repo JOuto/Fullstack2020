@@ -1,6 +1,6 @@
 import React from 'react'
 import { addVote } from "../reducers/anecdoteReducer"
-import { setNotif, resetNotif } from "../reducers/notificationReducer"
+import { setNotif } from "../reducers/notificationReducer"
 import { useSelector, useDispatch } from 'react-redux'
 
 const AnecdoteList = () => {
@@ -8,16 +8,17 @@ const AnecdoteList = () => {
     const dispatch = useDispatch()
 
     const vote = (id) => {
-        console.log('vote', id)
-        dispatch(addVote(id));
-        console.log('state now: ', anecdotes)
-        const anecdoteForNotif = anecdotes.find(a => a.id === id)
-        const content = anecdoteForNotif.content
-        console.log(content)
-        dispatch(setNotif("you voted: " + content))
-        setTimeout(() => {
+        const anecdote = anecdotes.find(a => a.id === id)
+
+        dispatch(addVote({ ...anecdote, votes: anecdote.votes + 1 }));
+        //console.log('state now: ', anecdotes)
+        //const anecdoteForNotif = anecdotes.find(a => a.id === id)
+        //const content = anecdoteForNotif.content
+
+        dispatch(setNotif("you voted: " + anecdote.content, 5))
+        /* setTimeout(() => {
             dispatch(resetNotif());
-        }, 5000)
+        }, 5000) */
         /* const reset = () => dispatch(resetNotif);
         dispatch(setNotif(content))
        

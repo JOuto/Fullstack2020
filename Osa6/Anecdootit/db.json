@@ -1,0 +1,24 @@
+{
+  "anecdotes": [
+    {
+      "content": "If it hurts, do it more often",
+      "id": 123,
+      "votes": 22
+    },
+    {
+      "content": "Adding manpower to a late software project makes it later!",
+      "id": 1234,
+      "votes": 6
+    },
+    {
+      "content": "noniin",
+      "id": "65558",
+      "votes": 0
+    },
+    {
+      "content": "nyt toimii",
+      "id": "30128",
+      "votes": 0
+    }
+  ]
+}
