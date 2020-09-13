@@ -1,7 +1,15 @@
+import React, { useState } from 'react'
+
 
 export const setNotif = (notificationtext, time) => {
+    //const [timeoutId, setTimeoutId] = useState("");
     const timeForTimeout = time * 1000
+
+
+
+
     return async dispatch => {
+
 
         dispatch({
             type: 'SET_NOTIFICATION',
@@ -9,12 +17,14 @@ export const setNotif = (notificationtext, time) => {
                 content: notificationtext,
             }
         })
-        setTimeout(() => {
+
+
+
+
+        const id = setTimeout(() => {
             dispatch({ type: "RESET_NOTIFICATION" })
         }, timeForTimeout)
-
-
-
+        clearTimeout(id - 1);
     }
 }
 
