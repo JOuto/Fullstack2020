@@ -1,6 +1,5 @@
-import React, { useState, useEffect, useRef } from "react";
-import userService from "../services/users";
-import { useSelector, useDispatch } from "react-redux";
+import React from "react";
+import { useSelector } from "react-redux";
 
 const UserPage = ({ id }) => {
   const users = useSelector((state) => state.user.users);

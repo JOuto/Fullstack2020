@@ -1,13 +1,5 @@
-import React, { useState, useEffect, useRef } from "react";
-import userService from "../services/users";
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Link,
-  useRouteMatch,
-  useHistory,
-} from "react-router-dom";
+import React from "react";
+import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 const UserList = () => {
@@ -21,20 +13,25 @@ const UserList = () => {
     <div>
       <h2>Users</h2>
       <table>
-        <tr>
-          <th></th>
-          <th>blogs created</th>
-        </tr>
+        <tbody>
+          <tr>
+            <th></th>
+            <th>blogs created</th>
+          </tr>
+        </tbody>
+
         {users &&
           users.map((user) => (
-            <tr>
-              <td>
-                <Link style={padding} to={`/${user.id}`}>
-                  {user.name}
-                </Link>
-              </td>{" "}
-              <td> {user.blogs.length}</td>{" "}
-            </tr>
+            <tbody key={user.id}>
+              <tr>
+                <td key={user.id}>
+                  <Link style={padding} to={`/${user.id}`}>
+                    {user.name}
+                  </Link>
+                </td>
+                <td> {user.blogs.length}</td>
+              </tr>
+            </tbody>
           ))}
       </table>
     </div>

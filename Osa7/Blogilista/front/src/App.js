@@ -29,29 +29,28 @@ import UserPage from "./components/UserPage";
 import BlogPage from "./components/BlogPage";
 import img2 from "./img/detail3.jpg";
 
+const Header = styled.h1`
+  border: 2px solid Navy;
+  background-image: url(${img2});
+  font-weight: bold;
+  font-family: "Anton", sans-serif;
+  font-size: 2em;
+`;
+const Navigation = styled.div`
+  background: black;
+  padding: 1em;
+  background-image: url(${img2});
+  border: 2px solid Navy;
+`;
+
+const Page = styled.div`
+  padding: 1em;
+
+  background-image: url(${img2});
+  width: 1000px;
+  height: 1000px;
+`;
 const App = () => {
-  const Header = styled.h1`
-    border: 2px solid Navy;
-    background-image: url(${img2});
-  `;
-  const Navigation = styled.div`
-    background: black;
-    padding: 1em;
-    background-image: url(${img2});
-    border: 2px solid Navy;
-  `;
-
-  const Page = styled.div`
-    padding: 1em;
-
-    background-image: url(${img2});
-    width: 1000px;
-    height: 1000px;
-  `;
-  /*  const Menu = styled.Menu`
-    background-image: url(${img});
-  `; */
-
   const dispatch = useDispatch();
   const notification = useSelector((state) => state.notification.content);
   const blogs = useSelector((state) => state.blogs);
@@ -111,10 +110,10 @@ const App = () => {
   const blogMatch = useRouteMatch("/blogs/:id");
   return (
     <Page>
-      <div class="container">
+      <div className="container">
         {notification && (
           <div>
-            <h4 class="alert-heading">Well done!</h4>
+            <h4 className="alert-heading">Well done!</h4>
             <Alert variant="success">{notification}</Alert>{" "}
           </div>
         )}
@@ -146,19 +145,15 @@ const App = () => {
                 <Navigation>
                   <Table bordered>
                     <tbody>
-                      <ul>
-                        {blogs
-                          .sort((a, b) => b.likes - a.likes)
-                          .map((blog, i) => (
-                            <tr key={blog.id}>
-                              <td>
-                                <Link to={`/blogs/${blog.id}`}>
-                                  {blog.title}
-                                </Link>
-                              </td>
-                            </tr>
-                          ))}
-                      </ul>
+                      {blogs
+                        .sort((a, b) => b.likes - a.likes)
+                        .map((blog, i) => (
+                          <tr key={blog.id}>
+                            <td>
+                              <Link to={`/blogs/${blog.id}`}>{blog.title}</Link>
+                            </td>
+                          </tr>
+                        ))}
                     </tbody>
                   </Table>
                 </Navigation>
