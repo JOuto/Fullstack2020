@@ -1,30 +1,18 @@
 import React, { useState } from "react";
 import { gql, useQuery, useMutation } from "@apollo/client";
 import Select from "react-select";
+import { ALL_AUTHORS } from "../queries";
+import { SET_BIRTHYEAR } from "../queries";
 
 const Authors = (props) => {
   const [born, setBorn] = useState("");
   const [selectedOption, setSelectedOption] = useState(null);
-  const ALL_AUTHORS = gql`
-    query {
-      allAuthors {
-        name
-        born
-        bookCount
-      }
-    }
-  `;
 
-  const result = useQuery(ALL_AUTHORS, { pollInterval: 2000 });
+  const result = useQuery(ALL_AUTHORS /* , { pollInterval: 2000 } */);
 
-  const SET_BIRTHYEAR = gql`
-    mutation editAuthor($name: String!, $setBornTo: Int!) {
-      editAuthor(name: $name, setBornTo: $setBornTo) {
-        name
-      }
-    }
-  `;
-  const [editAuthor] = useMutation(SET_BIRTHYEAR);
+  const [editAuthor] = useMutation(SET_BIRTHYEAR, {
+    refetchQueries: [{ query: ALL_AUTHORS }],
+  });
 
   const submit = async (event) => {
     event.preventDefault();
@@ -65,23 +53,28 @@ const Authors = (props) => {
             ))}
         </tbody>
       </table>
-      <h2>Set year of birth</h2>
 
-      <form onSubmit={submit}>
-        <Select
-          defaultValue={selectedOption}
-          onChange={setSelectedOption}
-          options={options}
-        />
+      {props.user && (
         <div>
-          born
-          <input
-            value={born}
-            onChange={({ target }) => setBorn(target.value)}
-          />
+          <h2>Set year of birth</h2>
+
+          <form onSubmit={submit}>
+            <Select
+              defaultValue={selectedOption}
+              onChange={setSelectedOption}
+              options={options}
+            />
+            <div>
+              born
+              <input
+                value={born}
+                onChange={({ target }) => setBorn(target.value)}
+              />
+            </div>
+            <button type="submit">set</button>
+          </form>
         </div>
-        <button type="submit">set</button>
-      </form>
+      )}
     </div>
   );
 };
