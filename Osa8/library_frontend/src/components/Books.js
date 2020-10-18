@@ -34,37 +34,16 @@ const Books = ({ client, show }) => {
   if (!show) {
     return null;
   }
-  if (books !== allBooks) {
-    return (
-      <div>
+
+  return (
+    <div>
+      <h2>books</h2>
+      {books !== allBooks && (
         <p>
           {" "}
           in genre <b>{genre} </b>
         </p>
-        <table>
-          <tbody>
-            <tr>
-              <th></th>
-              <th>author</th>
-              <th>published</th>
-            </tr>
-            {books.map((b) => (
-              <tr key={b.title}>
-                <td>{b.title}</td>
-                <td>{b.author.name}</td>
-                <td>{b.published}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        <button onClick={() => setBooks(allBooks)}>all genres</button>
-      </div>
-    );
-  }
-  return (
-    <div>
-      <h2>books</h2>
-
+      )}
       <table>
         <tbody>
           <tr>
@@ -81,12 +60,14 @@ const Books = ({ client, show }) => {
           ))}
         </tbody>
       </table>
+      choose genre:{" "}
       {allGenres &&
         allGenres
           .filter((value, index, self) => self.indexOf(value) === index)
           .map((genres) => (
             <button onClick={() => settingGenre(genres)}>{genres}</button>
           ))}
+      <button onClick={() => setBooks(allBooks)}>all genres</button>
     </div>
   );
 };

@@ -5,7 +5,10 @@ const Book = require("./Models/book");
 const Author = require("./Models/author");
 const User = require("./Models/user");
 const jwt = require("jsonwebtoken");
+const { PubSub } = require("apollo-server");
+const pubsub = new PubSub();
 require("dotenv").config();
+const DataLoader = require("dataloader");
 
 const JWT_SECRET = "kissa";
 
@@ -116,7 +119,7 @@ const typeDefs = gql`
     published: Int
     author: Author!
     id: ID!
-    genres: [String]!
+    genres: [String]
   }
   type Author {
     name: String!
@@ -134,7 +137,9 @@ const typeDefs = gql`
     value: String!
     genre: String!
   }
-
+  type Subscription {
+    bookAdded: Book!
+  }
   type Query {
     bookCount: Int!
     authorCount: Int!
@@ -220,9 +225,10 @@ const resolvers = {
     addBook: async (root, args, context) => {
       const currentUser = context.currentUser;
 
-      /*  if (!currentUser) {
+      if (!currentUser) {
         throw new AuthenticationError("not authenticated");
-      } */
+      }
+
       const authorInDb = await Author.findOne({ name: args.author });
       if (!authorInDb) {
         const author2 = new Author({
@@ -241,11 +247,14 @@ const resolvers = {
             invalidArgs: args,
           });
         }
-        return {
-          ...args,
-          author: { name: author2.name, id: author2.id },
-          id: book.id,
-        };
+        pubsub.publish("BOOK_ADDED", {
+          bookAdded: {
+            ...args,
+            author: { name: author2.name, id: author2.id },
+            id: book.id,
+          },
+        });
+        return;
         //return book.save();
       }
 
@@ -292,32 +301,34 @@ const resolvers = {
       }
 
       return resultAuthor;
-      /* 
-      if (!authors.find((author) => author.name === args.name)) {
-        return null;
-      }
-      const editedAuthor = {
-        name: args.name,
-        id: uuid(),
-        born: args.setBornTo,
-      }; */
-
-      /*   authors = authors.map((author) =>
-        author.name === args.name ? editedAuthor : author
-      );
-
-      console.log(authors);
-      return editedAuthor; */
+    },
+  },
+  Subscription: {
+    bookAdded: {
+      subscribe: () => pubsub.asyncIterator(["BOOK_ADDED"]),
     },
   },
   Author: {
-    bookCount: async (root) => {
+    bookCount: (root) => {
+      const bookCountLoader = new DataLoader(async (keys) => {
+        const books1 = await Book.find({}).populate("author");
+
+        const result = keys.map((key) => {
+          return books1.filter((book) => book.author.name === key).length;
+        });
+        return Promise.resolve(result);
+      });
+
+      return bookCountLoader.load(root.name);
+    },
+  },
+  /* 
       const books1 = await Book.find({}).populate("author");
       //console.log(books1);
 
       return books1.filter((book) => book.author.name === root.name).length;
     },
-  },
+  }, */
 };
 
 const server = new ApolloServer({
@@ -333,6 +344,7 @@ const server = new ApolloServer({
   },
 });
 
-server.listen().then(({ url }) => {
+server.listen().then(({ url, subscriptionsUrl }) => {
   console.log(`Server ready at ${url}`);
+  console.log(`Subscriptions ready at ${subscriptionsUrl}`);
 });

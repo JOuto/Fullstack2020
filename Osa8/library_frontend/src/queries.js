@@ -61,7 +61,7 @@ export const SET_BIRTHYEAR = gql`
 `;
 
 export const BOOKS_IN_GENRE = gql`
-  query genreFilter($genre: String!) {
+  query genreFilter($genre: String) {
     allBooks(genre: $genre) {
       title
       author {
@@ -69,6 +69,16 @@ export const BOOKS_IN_GENRE = gql`
       }
       published
       genres
+    }
+  }
+`;
+export const BOOK_ADDED = gql`
+  subscription {
+    bookAdded {
+      title
+      author {
+        name
+      }
     }
   }
 `;
