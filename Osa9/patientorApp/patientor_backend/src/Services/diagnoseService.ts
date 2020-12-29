@@ -6,10 +6,6 @@ const getDiagnoses = (): Array<Diagnose> => {
   return diagnoses;
 };
 
-/* const addEntry = () => {
-  return null;
-};
- */
 export default {
   getDiagnoses,
 };

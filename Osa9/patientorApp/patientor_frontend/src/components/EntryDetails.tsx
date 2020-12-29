@@ -43,6 +43,7 @@ const EntryDetails: React.FC<{ entry: Entry }> = ({ entry }) => {
         );
       } catch (e) {
         console.log(e + "diagnose not found");
+        return null;
       }
     });
   };

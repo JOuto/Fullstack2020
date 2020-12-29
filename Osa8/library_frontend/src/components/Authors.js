@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { gql, useQuery, useMutation } from "@apollo/client";
+import { useQuery, useMutation } from "@apollo/client";
 import Select from "react-select";
 import { ALL_AUTHORS } from "../queries";
 import { SET_BIRTHYEAR } from "../queries";

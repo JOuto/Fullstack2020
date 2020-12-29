@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { gql, useQuery, useLazyQuery } from "@apollo/client";
+import { useQuery, useLazyQuery } from "@apollo/client";
 import { ALL_BOOKS, BOOKS_IN_GENRE } from "../queries";
-//import { withApollo } from "react-apollo";
 
-const Books = ({ client, show }) => {
+const Books = ({ show }) => {
   const [genre, setGenre] = useState(null);
   const [books, setBooks] = useState([]);
   const [allBooks, setAllbooks] = useState([]);
@@ -51,8 +50,8 @@ const Books = ({ client, show }) => {
             <th>author</th>
             <th>published</th>
           </tr>
-          {books.map((b) => (
-            <tr key={b.title}>
+          {books.map((b, i) => (
+            <tr key={i}>
               <td>{b.title}</td>
               <td>{b.author.name}</td>
               <td>{b.published}</td>

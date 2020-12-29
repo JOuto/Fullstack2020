@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { gql, useQuery, useMutation, setError } from "@apollo/client";
+import { useMutation, setError } from "@apollo/client";
 import {
   CREATE_BOOK,
   ALL_BOOKS,
@@ -24,12 +24,10 @@ const NewBook = (props) => {
       setError(error.graphQLErrors[0].message);
     },
   });
-  //console.log(createBook);
 
   const submit = async (event) => {
     event.preventDefault();
-    //const published = +published; /* parseInt(published, 10); */
-    //console.log(title, author, genres, typeof pub, pub);
+
     createBook({ variables: { title, author, published, genres } });
     console.log("add book...");
 

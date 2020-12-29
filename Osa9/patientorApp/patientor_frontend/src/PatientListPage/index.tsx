@@ -79,8 +79,3 @@ const PatientListPage: React.FC = () => {
 };
 
 export default PatientListPage;
-{
-  /* <Link style={padding} to="/create">
-        create new
-      </Link> */
-}

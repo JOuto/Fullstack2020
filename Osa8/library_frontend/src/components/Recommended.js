@@ -1,14 +1,7 @@
 import React from "react";
-import {
-  gql,
-  useQuery,
-  useMutation,
-  setError,
-  useLazyQuery,
-} from "@apollo/client";
+import { useQuery } from "@apollo/client";
 import { BOOKS_IN_GENRE } from "../queries";
 
-//const jwt = require("jsonwebtoken");
 const Recommended = (props) => {
   const genre = localStorage.getItem("userGenre");
   const { data } = useQuery(

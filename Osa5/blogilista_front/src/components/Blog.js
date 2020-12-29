@@ -31,7 +31,7 @@ const Blog = ({ blog, blogUpdate, user, removeBlog }) => {
     removeBlog(blog.id);
   };
   Blog.propTypes = {
-    blog: PropTypes.array.isRequired,
+    blog: PropTypes.object.isRequired,
     blogUpdate: PropTypes.func.isRequired,
     user: PropTypes.object.isRequired,
     removeBlog: PropTypes.func.isRequired,
@@ -39,8 +39,10 @@ const Blog = ({ blog, blogUpdate, user, removeBlog }) => {
   return (
     <div style={blogStyle}>
       <div style={hideWhenVisible}>
-        <p  >{blog.title}</p>
-        <button className="show" onClick={() => setFullBlogVisible(true)}>show</button>
+        <p>{blog.title}</p>
+        <button className="show" onClick={() => setFullBlogVisible(true)}>
+          show
+        </button>
       </div>
       <div style={showWhenVisible}>
         <p>{blog.title}</p>

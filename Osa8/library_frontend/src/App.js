@@ -12,6 +12,7 @@ const App = () => {
   const [token, setToken] = useState(
     localStorage.getItem("library-user-token")
   );
+  const [errorMessage, setErrorMessage] = useState("");
 
   const updateCacheWith = (addedBook) => {
     const includedIn = (set, object) =>
@@ -34,6 +35,13 @@ const App = () => {
     },
   });
 
+  const notify = (message) => {
+    setErrorMessage(message);
+    setTimeout(() => {
+      setErrorMessage(null);
+    }, 5000);
+  };
+
   const logout = () => {
     setToken(null);
     localStorage.clear();
@@ -51,9 +59,11 @@ const App = () => {
         </div>
 
         <Authors show={page === "authors"} />
+        {errorMessage && <span style={{ color: "red" }}>{errorMessage}</span>}
         <LoginForm
           setPage={setPage}
           setToken={setToken}
+          setError={notify}
           show={page === "login"}
         />
         <Books show={page === "books"} />

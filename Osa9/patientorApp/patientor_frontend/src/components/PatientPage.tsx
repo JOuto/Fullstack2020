@@ -137,7 +137,7 @@ const PatientPage: React.FC = () => {
       };
       fetchPatient();
     }
-  }, [dispatch]);
+  }, [dispatch, id, patient]);
 
   if (patient !== null) {
     return (

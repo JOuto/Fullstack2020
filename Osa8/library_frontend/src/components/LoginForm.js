@@ -1,16 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { LOGIN } from "../queries";
 
-import { gql, useQuery, setError, useMutation } from "@apollo/client";
+import { useMutation, gr } from "@apollo/client";
 
-/* export const LOGIN = gql`
-  mutation login($username: String!, $password: String!) {
-    login(username: $username, password: $password) {
-      value
-    }
-  }
-`; */
-const LoginForm = ({ setToken, show, setPage }) => {
+const LoginForm = ({ setToken, show, setPage, setError }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
