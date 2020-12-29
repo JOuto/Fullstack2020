@@ -1,0 +1,70 @@
+
+0.4:
+
+//post pyyntö palvelimelle sisältäen luotavan muistiinpanon tiedot
+selain-> palvelin: HTTPS POST https://studies.cs.helsinki.fi/exampleapp/new_note
+
+palvelin-> selain: statuskoodi 302, uudelleenohjaus osoitteeseen exampleapp.notes
+
+selain-> palvelin: HTTPS GET https://studies.cs.helsinki.fi/exampleapp/notes
+
+palvelin-> selain: HTML tiedosto
+
+selain-> palvelin: HTTPS GET https://studies.cs.helsinki.fi/exampleapp/main.css
+
+palvelin-> selain: css tiedosto
+
+selain-> palvelin: HTTPS GET https://studies.cs.helsinki.fi/exampleapp/main.js
+
+palvelin-> selain: javacript tiedosto
+
+//selain alkaa suorittaa javascript koodia,
+joka pyytää JSON-datan palvelimelta
+
+selain-> palvelin: HTTPS GET https://studies.cs.helsinki.fi/exampleapp/data.json
+
+palvelin-> selain: json tiedosto (notes)
+
+//selain renderöi js-koodin mukaisesti vastauksena saadun muistiinpanolistan ruudulle 
+
+
+
+
+
+0.5
+selain-> palvelin: HTTPS GET https://studies.cs.helsinki.fi/exampleapp/notes
+
+palvelin-> selain: HTML tiedosto
+
+selain-> palvelin: HTTPS GET https://studies.cs.helsinki.fi/exampleapp/main.css
+
+palvelin-> selain: css tiedosto
+
+selain-> palvelin: HTTPS GET https://studies.cs.helsinki.fi/exampleapp/main.js
+
+palvelin-> selain: javacript tiedosto
+
+//selain alkaa suorittaa javascript koodia,
+joka pyytää JSON-datan palvelimelta
+
+selain-> palvelin: HTTPS GET https://studies.cs.helsinki.fi/exampleapp/data.json
+
+palvelin-> selain: json tiedosto (notes)
+
+//vastaus käynnistää tapahtumakäsittelijän, muistiinpanot tallentuvat js-koodissa muistiinpanot listaan joka renderöityy ruudulle  
+
+
+
+0.6
+
+//käyttäjän klikatessa "save" tapahtumakäsittelijä aktivoituu, uusi muistiinpano tallentuu js-koodin muistiinpanot listaan, joka latautuu päivitettynä ruudulle
+ja selain lähettää post-pyynnön palvelimelle sisältäen uuden muistiinpanon
+
+selain-> palvelin: HTTPS POST https://studies.cs.helsinki.fi/exampleapp/new_note_spa
+
+palvelin-> selain: vastauksena statuskoodi 201, uusi muistiinpano luotu
+
+
+
+
+
