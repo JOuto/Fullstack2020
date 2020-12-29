@@ -127,24 +127,29 @@ const App = () => {
   const namesToShow = persons.filter((p) => p.name.includes(searchInput));
 
   const deleteName = (name) => () => {
-    axios
-      .delete("/api/persons/" + name.id)
-      .then((response) => {
-        console.log(response.data);
-        setNameListRender(namesToShow);
-        setNotification(`${name.name} deleted `);
-        setTimeout(() => {
-          setNotification(null);
-        }, 5000);
-      })
-      .catch((error) => {
-        setNotification(`Note '${name.name}' was already removed from server`);
-        setNameListRender(namesToShow);
+    const result = window.confirm("are you sure?");
+    if (result) {
+      axios
+        .delete("/api/persons/" + name.id)
+        .then((response) => {
+          console.log(response.data);
+          setNameListRender(namesToShow);
+          setNotification(`${name.name} deleted `);
+          setTimeout(() => {
+            setNotification(null);
+          }, 5000);
+        })
+        .catch((error) => {
+          setNotification(
+            `Note '${name.name}' was already removed from server`
+          );
+          setNameListRender(namesToShow);
 
-        setTimeout(() => {
-          setNotification(null);
-        }, 5000);
-      });
+          setTimeout(() => {
+            setNotification(null);
+          }, 5000);
+        });
+    }
   };
 
   return (

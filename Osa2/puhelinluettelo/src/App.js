@@ -4,8 +4,11 @@ import { useState } from "react";
 import axios from "axios";
 import { useEffect } from "react";
 import personService from "./services/persons2";
+import Notification from "./components/Notification";
+import AddPerson from "./components/AddPerson";
+import Names from "./components/Names";
 
-const Notification = ({ message }) => {
+/* const Notification = ({ message }) => {
   if (message === null) {
     return null;
   }
@@ -13,16 +16,16 @@ const Notification = ({ message }) => {
     return <div className="error">{message}</div>;
   }
   return <div className="notification">{message}</div>;
-};
+}; */
 
-const Names = ({ names, deleteName }) => {
+/* const Names = ({ names, deleteName }) => {
   return (
     <div>
       {names.name} {names.number}
       <button onClick={deleteName}>delete</button>
     </div>
   );
-};
+}; */
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -79,7 +82,7 @@ const App = () => {
 
         axios
           .put(
-            "http://localhost:3001/api/persons/" + nameToReplace[0].id,
+            "http://localhost:3001/persons/" + nameToReplace[0].id,
             nameObject
           )
           .then((response) => console.log(response.data))
@@ -119,24 +122,29 @@ const App = () => {
   const namesToShow = persons.filter((p) => p.name.includes(searchInput));
 
   const deleteName = (name) => () => {
-    axios
-      .delete("http://localhost:3001/api/persons/" + name.id)
-      .then((response) => {
-        console.log(response.data);
-        setNameListRender(namesToShow);
-        setNotification(`${name.name} deleted `);
-        setTimeout(() => {
-          setNotification(null);
-        }, 5000);
-      })
-      .catch((error) => {
-        setNotification(`Note '${name.name}' was already removed from server`);
-        setNameListRender(namesToShow);
+    const result = window.confirm("are you sure?");
+    if (result) {
+      axios
+        .delete("http://localhost:3001/persons/" + name.id)
+        .then((response) => {
+          console.log(response.data);
+          setNameListRender(namesToShow);
+          setNotification(`${name.name} deleted `);
+          setTimeout(() => {
+            setNotification(null);
+          }, 5000);
+        })
+        .catch((error) => {
+          setNotification(
+            `Note '${name.name}' was already removed from server`
+          );
+          setNameListRender(namesToShow);
 
-        setTimeout(() => {
-          setNotification(null);
-        }, 5000);
-      });
+          setTimeout(() => {
+            setNotification(null);
+          }, 5000);
+        });
+    }
   };
 
   return (
@@ -145,7 +153,14 @@ const App = () => {
       <Notification message={notification} />
       search
       <input value={searchInput} onChange={handleNameSearch} />
-      <h2>Add a new</h2>
+      <AddPerson
+        addPerson={addPerson}
+        newName={newName}
+        handleNameChange={handleNameChange}
+        newNumber={newNumber}
+        handleNumberChange={handleNumberChange}
+      />
+      {/* <h2>Add a new</h2>
       <form onSubmit={addPerson}>
         <div>
           name: <input value={newName} onChange={handleNameChange} />
@@ -156,7 +171,7 @@ const App = () => {
         <div>
           <button type="submit">add</button>
         </div>
-      </form>
+      </form> */}
       <h2>Names</h2>
       {namesToShow &&
         namesToShow.map((name, i) => (
